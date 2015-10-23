@@ -26,11 +26,11 @@ function shift_cipher_form() {
         '#element_validate' => array('element_validate_integer_positive', 'element_validate_range'),
         '#required' => TRUE,
     );
-    $form['queen_file_position'] = array(
-        '#title' => 'Queen File Position',
+    $form['shift_direction'] = array(
+        '#title' => 'Shift Direction',
         '#type' => 'textfield',
-        '#description' => t("Please enter the queen's coordinates. (ex: 1-8)"),
-        '#element_validate' => array('element_validate_integer_positive', 'element_validate_range'),
+        '#description' => t("What direction would you like to shift in?"),
+        '#element_validate' => array('element_validate_alpha_range'),
         '#required' => TRUE,
     );
     $form['target_rank_position'] = array(
@@ -61,8 +61,8 @@ function element_validate_range($element) {
 }
 
 function element_validate_alpha_range($element) {
-    if (!in_array($element['#value'], array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'))) {
-        form_error($element, t('Value must be uppercase letter between A and H'));
+    if (!in_array($element['#value'], array('left', 'Left', 'LEFT', 'right', 'Right', 'RIGHT'))) {
+        form_error($element, t('Direction must be either left or right'));
     }
 }
 

@@ -45,7 +45,7 @@ Input:
     Shift value: 1
     Shift direction: right
     Phrase: "Hello there"
-Output: "Ifmmp uifsf"
+Output: "ifmmp uifsf"
 
 8) One shift, right, spaces, caps, punctuation
 Input:
