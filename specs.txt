@@ -1,0 +1,55 @@
+1) No shift, either direction
+Input:
+    Shift value: 0
+    Shift direction: right
+    Phrase: "hello"
+Output: "hello"
+
+2) One shift, right
+Input:
+    Shift value: 1
+    Shift direction: right
+    Phrase: "hello"
+Output: "ifmmp"
+
+3) One shift, left
+Input:
+    Shift value: 1
+    Shift direction: left
+    Phrase: "hello"
+Output: "gdkkn"
+
+4) Three shift, right
+Input:
+    Shift value: 3
+    Shift direction: right
+    Phrase: "hello"
+Output: "khoor"
+
+5) Three shift, left
+Input:
+    Shift value: 3
+    Shift direction: left
+    Phrase: "hello"
+Output: "ebiil"
+
+6) One shift, right, spaces
+Input:
+    Shift value: 1
+    Shift direction: right
+    Phrase: "hello there"
+Output: "ifmmp uifsf"
+
+7) One shift, right, spaces, caps
+Input:
+    Shift value: 1
+    Shift direction: right
+    Phrase: "Hello there"
+Output: "Ifmmp uifsf"
+
+8) One shift, right, spaces, caps, punctuation
+Input:
+    Shift value: 1
+    Shift direction: right
+    Phrase: "Hello there!"
+Output: "Ifmmp uifsf!"
