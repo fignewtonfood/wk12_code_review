@@ -1,4 +1,5 @@
 <?php
+//renders menu item in navigation
 function shift_cipher_menu(){
     $items = array();
     $items['shift_cipher'] = array (
@@ -17,12 +18,13 @@ function shift_cipher_menu(){
     );
     return $items;
 }
-
+//function to render form
 function shift_cipher_form() {
     $form['shift_value'] = array(
         '#title' => 'Shift Value',
         '#type' => 'textfield',
         '#description' => t("How many spaces would you like to shift? (1-25)"),
+        //positive integer and custom range validation
         '#element_validate' => array('element_validate_integer_positive', 'element_validate_range'),
         '#required' => TRUE,
     );
@@ -30,6 +32,7 @@ function shift_cipher_form() {
         '#title' => 'Shift Direction',
         '#type' => 'textfield',
         '#description' => t("What direction would you like to shift in?"),
+        //custom left/right validation
         '#element_validate' => array('element_validate_alpha_range'),
         '#required' => TRUE,
     );
@@ -45,72 +48,71 @@ function shift_cipher_form() {
     );
     return $form;
 }
-
+//checks if form value is between 1 and 25
 function element_validate_range($element) {
     if ($element['#value'] < 1 || $element['#value'] > 25) {
         form_error($element, t('Value must be number between 1-25'));
     }
 }
-
+//checks if form value is right or left
 function element_validate_alpha_range($element) {
     if (!in_array($element['#value'], array('left', 'Left', 'LEFT', 'right', 'Right', 'RIGHT'))) {
         form_error($element, t('Direction must be either left or right'));
     }
 }
-
+//validation for entire form, returns error if it doesn't match regular expression
 function shift_cipher_form_validate($form, &$form_state) {
     $pattern = '/[^A-Za-z0-9^\'^\:^\,^\-^\!^\(^\)^\.^\?^\"^\;\s]/';
     $cipher_check = $form_state['values']['cipher_phrase'];
-    // drupal_set_message(sprintf('<pre>%s</pre>', print_r($pattern, TRUE)));
     if (preg_match_all($pattern, $cipher_check)) {
         form_set_error('cipher_phrase', 'Invalid character detected!');
     }
 }
-
+//runs when form is submitted
 function shift_cipher_form_submit($form, &$form_state) {
     $reference = array('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
     'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z');
     $spaces_to_shift = $form_state['values']['shift_value'];
     $direction_to_shift = $form_state['values']['shift_direction'];
     $phrase_to_cipher = $form_state['values']['cipher_phrase'];
+    //transforms phrase to lowercase and splits into array
     $lower_phrase = strtolower($phrase_to_cipher);
     $split_phrase = str_split($lower_phrase);
     $output = '';
+    //determines what direction to increment through reference array
     if (in_array($direction_to_shift, array('left', 'Left', 'LEFT'))) {
         $direction_bit = -1;
     } else {
         $direction_bit = 1;
     }
+    //takes each character in phrase...
     foreach ($split_phrase as $character) {
+        //and checks to see if that character is in the reference array.
         if (in_array($character, $reference)) {
+            //then finds the key of the cipher character in the reference array
             $key = array_search($character, $reference);
+            //uses math to determine new key value
             $new_key = ($spaces_to_shift * $direction_bit) + $key;
+            //checks for wrapping and increments/decrements to find new key value
             if ($new_key < 0) {
                 $new_key += 26;
             } elseif ($new_key > 25) {
                 $new_key -= 26;
             }
+            //finds new character from reference and adds to output
             $output .= $reference[$new_key];
         } else {
+            //if character is not in reference array, then that character is just returned as is.
             $output .= $character;
         }
     }
-    // if ($queen_rank_coordinates == $target_rank_coordinates) {
-    //     $check_output = "Can attack vertically!";
-    // //checks horizontal position
-    // } elseif ($queen_file_coordinates == $target_file_coordinates) {
-    //     $check_output = "Can attack horizontally!";
-    // //checks if diagonal
-    // } elseif (abs($queen_rank_coordinates- $target_rank_coordinates) == abs($queen_file_coordinates-$target_file_coordinates)) {
-    //     $check_output = "Can attack diagonally!";
-    // } else {
-    //     $check_output = "No attacks!";
-    // }
-    //sets the local session value to the output from all the business logic
+    //writes output to session variable so that it can be passed to the next page
     $_SESSION['shift_cipher_output'] = $output;
+    //sends user to success page
     $form_state['redirect'] = 'shift_cipher_success_page';
 }
 
 function shift_cipher_success() {
+    //prints session variable to screen
     return '<p>'.$_SESSION['shift_cipher_output'].'</p>';
 }
