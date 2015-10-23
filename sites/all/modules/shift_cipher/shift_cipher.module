@@ -1,0 +1,105 @@
+<?php
+function queen_attack2_menu(){
+    $items = array();
+    $items['queen_attack2'] = array (
+        'title' => 'Queen Attack',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('queen_attack2_form'),
+        'access callback' => TRUE,
+        'type' => MENU_NORMAL_ITEM,
+    );
+
+    $items['queen_attack2_success_page'] = array (
+        'title' => 'Results',
+        'page callback' => 'queen_attack2_success',
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+    return $items;
+}
+
+function queen_attack2_form() {
+    $form['queen_rank_position'] = array(
+        '#title' => 'Queen Rank Position',
+        '#type' => 'textfield',
+        '#description' => t("Please enter the queen's coordinates. (ex: A-H)"),
+        '#element_validate' => array('element_validate_alpha_range'),
+        '#required' => TRUE,
+    );
+    $form['queen_file_position'] = array(
+        '#title' => 'Queen File Position',
+        '#type' => 'textfield',
+        '#description' => t("Please enter the queen's coordinates. (ex: 1-8)"),
+        '#element_validate' => array('element_validate_integer_positive', 'element_validate_range'),
+        '#required' => TRUE,
+    );
+    $form['target_rank_position'] = array(
+        '#title' => 'Target Rank Position',
+        '#type' => 'textfield',
+        '#description' => t("Please enter the target's coordinates. (ex: A-H)"),
+        '#element_validate' => array('element_validate_alpha_range'),
+        '#required' => TRUE,
+    );
+    $form['target_file_position'] = array(
+        '#title' => 'Target File Position',
+        '#type' => 'textfield',
+        '#description' => t("Please enter the target's coordinates. (ex: 1-8)"),
+        '#element_validate' => array('element_validate_integer_positive', 'element_validate_range'),
+        '#required' => TRUE,
+    );
+    $form['submit'] = array(
+        '#type' => 'submit',
+        '#value' => 'Go',
+    );
+    return $form;
+}
+
+function element_validate_range($element) {
+    if ($element['#value'] > 8 || $element['#value'] < 1) {
+        form_error($element, t('Value must be number between 1-8'));
+    }
+}
+
+function element_validate_alpha_range($element) {
+    if (!in_array($element['#value'], array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'))) {
+        form_error($element, t('Value must be uppercase letter between A and H'));
+    }
+}
+
+function queen_attack2_form_validate($form, &$form_state) {
+    if (($form_state['values']['queen_rank_position'] == $form_state['values']['target_rank_position']) && ($form_state['values']['queen_file_position'] == $form_state['values']['target_file_position'])) {
+        form_set_error('queen_rank_position', 'Queen and target cannot share the same space!');
+    }
+}
+
+function queen_attack2_form_submit($form, &$form_state) {
+    //for normal chess coordinate convention (eg d4 to a5 etc)
+    $reference = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H');
+    //grabs values from form for queen and target
+    $queen_rank_coordinates = $form_state['values']['queen_rank_position'];
+    $queen_file_coordinates = $form_state['values']['queen_file_position'];
+    $target_rank_coordinates = $form_state['values']['target_rank_position'];
+    $target_file_coordinates = $form_state['values']['target_file_position'];
+    //converts letter x-axis coordinates to numbers
+    $queen_rank_coordinates = (array_search($queen_rank_coordinates, $reference))+1;
+    $target_rank_coordinates = (array_search($target_rank_coordinates, $reference))+1;
+    //checks vertical position
+    if ($queen_rank_coordinates == $target_rank_coordinates) {
+        $check_output = "Can attack vertically!";
+    //checks horizontal position
+    } elseif ($queen_file_coordinates == $target_file_coordinates) {
+        $check_output = "Can attack horizontally!";
+    //checks if diagonal
+    } elseif (abs($queen_rank_coordinates- $target_rank_coordinates) == abs($queen_file_coordinates-$target_file_coordinates)) {
+        $check_output = "Can attack diagonally!";
+    } else {
+        $check_output = "No attacks!";
+    }
+    //sets the local session value to the output from all the business logic
+    $_SESSION['queen_attack2_output'] = $check_output;
+    $form_state['redirect'] = 'queen_attack2_success_page';
+}
+
+function queen_attack2_success() {
+    return '<p>'.$_SESSION['queen_attack2_output'].'</p>';
+}

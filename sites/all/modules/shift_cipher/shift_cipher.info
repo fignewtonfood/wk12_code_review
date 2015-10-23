@@ -1,0 +1,5 @@
+name = Shift Cipher
+description = Implements shift cipher on input text.
+package = My First Modules
+core = 7.x
+files[] = shift_cipher.module
