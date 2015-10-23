@@ -33,18 +33,11 @@ function shift_cipher_form() {
         '#element_validate' => array('element_validate_alpha_range'),
         '#required' => TRUE,
     );
-    $form['target_rank_position'] = array(
-        '#title' => 'Target Rank Position',
+    $form['cipher_phrase'] = array(
+        '#title' => 'Word or Phrase to Cipher',
         '#type' => 'textfield',
-        '#description' => t("Please enter the target's coordinates. (ex: A-H)"),
+        '#description' => t("What word or phrase would you like to cipher?"),
         '#element_validate' => array('element_validate_alpha_range'),
-        '#required' => TRUE,
-    );
-    $form['target_file_position'] = array(
-        '#title' => 'Target File Position',
-        '#type' => 'textfield',
-        '#description' => t("Please enter the target's coordinates. (ex: 1-8)"),
-        '#element_validate' => array('element_validate_integer_positive', 'element_validate_range'),
         '#required' => TRUE,
     );
     $form['submit'] = array(
@@ -67,8 +60,10 @@ function element_validate_alpha_range($element) {
 }
 
 function shift_cipher_form_validate($form, &$form_state) {
-    if (($form_state['values']['queen_rank_position'] == $form_state['values']['target_rank_position']) && ($form_state['values']['queen_file_position'] == $form_state['values']['target_file_position'])) {
-        form_set_error('queen_rank_position', 'Queen and target cannot share the same space!');
+    $pattern = '/[^A-Za-z0-9^\'^\:^\,^\-^\!^\(^\)^\.^\?^\"^\;\s]/g'
+    $cipher_check = $form_state['values']['cipher_phrase'];
+    if (preg_match($pattern, $cipher_check)>0) {
+        form_set_error('cipher_phrase', 'Invalid character detected!');
     }
 }
 
