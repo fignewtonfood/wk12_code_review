@@ -1,24 +1,24 @@
 <?php
-function queen_attack2_menu(){
+function shift_cipher_menu(){
     $items = array();
-    $items['queen_attack2'] = array (
-        'title' => 'Queen Attack',
+    $items['shift_cipher'] = array (
+        'title' => 'Shift Cipher',
         'page callback' => 'drupal_get_form',
-        'page arguments' => array('queen_attack2_form'),
+        'page arguments' => array('shift_cipher_form'),
         'access callback' => TRUE,
         'type' => MENU_NORMAL_ITEM,
     );
 
-    $items['queen_attack2_success_page'] = array (
+    $items['shift_cipher_success_page'] = array (
         'title' => 'Results',
-        'page callback' => 'queen_attack2_success',
+        'page callback' => 'shift_cipher_success',
         'access callback' => TRUE,
         'type' => MENU_CALLBACK,
     );
     return $items;
 }
 
-function queen_attack2_form() {
+function shift_cipher_form() {
     $form['queen_rank_position'] = array(
         '#title' => 'Queen Rank Position',
         '#type' => 'textfield',
@@ -66,13 +66,13 @@ function element_validate_alpha_range($element) {
     }
 }
 
-function queen_attack2_form_validate($form, &$form_state) {
+function shift_cipher_form_validate($form, &$form_state) {
     if (($form_state['values']['queen_rank_position'] == $form_state['values']['target_rank_position']) && ($form_state['values']['queen_file_position'] == $form_state['values']['target_file_position'])) {
         form_set_error('queen_rank_position', 'Queen and target cannot share the same space!');
     }
 }
 
-function queen_attack2_form_submit($form, &$form_state) {
+function shift_cipher_form_submit($form, &$form_state) {
     //for normal chess coordinate convention (eg d4 to a5 etc)
     $reference = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H');
     //grabs values from form for queen and target
@@ -96,10 +96,10 @@ function queen_attack2_form_submit($form, &$form_state) {
         $check_output = "No attacks!";
     }
     //sets the local session value to the output from all the business logic
-    $_SESSION['queen_attack2_output'] = $check_output;
-    $form_state['redirect'] = 'queen_attack2_success_page';
+    $_SESSION['shift_cipher_output'] = $check_output;
+    $form_state['redirect'] = 'shift_cipher_success_page';
 }
 
-function queen_attack2_success() {
-    return '<p>'.$_SESSION['queen_attack2_output'].'</p>';
+function shift_cipher_success() {
+    return '<p>'.$_SESSION['shift_cipher_output'].'</p>';
 }
