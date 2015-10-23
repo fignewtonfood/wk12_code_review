@@ -19,11 +19,11 @@ function shift_cipher_menu(){
 }
 
 function shift_cipher_form() {
-    $form['queen_rank_position'] = array(
-        '#title' => 'Queen Rank Position',
+    $form['shift_value'] = array(
+        '#title' => 'Shift Value',
         '#type' => 'textfield',
-        '#description' => t("Please enter the queen's coordinates. (ex: A-H)"),
-        '#element_validate' => array('element_validate_alpha_range'),
+        '#description' => t("How many spaces would you like to shift? (1-25)"),
+        '#element_validate' => array('element_validate_integer_positive', 'element_validate_range'),
         '#required' => TRUE,
     );
     $form['queen_file_position'] = array(
