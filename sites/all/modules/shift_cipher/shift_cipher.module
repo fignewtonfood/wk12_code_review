@@ -55,8 +55,8 @@ function shift_cipher_form() {
 }
 
 function element_validate_range($element) {
-    if ($element['#value'] > 8 || $element['#value'] < 1) {
-        form_error($element, t('Value must be number between 1-8'));
+    if ($element['#value'] < 1 || $element['#value'] > 25) {
+        form_error($element, t('Value must be number between 1-25'));
     }
 }
 
